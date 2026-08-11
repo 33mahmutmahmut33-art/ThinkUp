@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>THINKUP — Fikrini paylaş. Geliştir.</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#090914;color:#f7f7ff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.app{max-width:430px;margin:auto;min-height:100vh;padding:22px 18px 90px;background:linear-gradient(180deg,#0b0b18,#111022)}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
+.logo{font-size:28px;font-weight:900;letter-spacing:2px}.logo span{color:#9d6cff}
+.icon{width:40px;height:40px;border:1px solid #292741;border-radius:14px;background:#15142a;color:white;font-size:18px}
+.hero{padding:24px;border-radius:24px;background:linear-gradient(135deg,#17152f,#25164b);border:1px solid #3a2b66;box-shadow:0 12px 40px #0005}
+.hero h1{font-size:28px;margin:0 0 8px}.hero p{color:#bdb9d2;margin:0 0 18px}
+button{border:0;color:white;font-weight:800;cursor:pointer}.primary{width:100%;padding:14px;border-radius:14px;background:linear-gradient(90deg,#7c4dff,#b35cff);font-size:15px}
+h2{font-size:18px;margin:26px 0 12px}.filters{display:flex;gap:8px;overflow:auto}.filter{white-space:nowrap;padding:9px 13px;border-radius:12px;background:#171629;color:#aaa6bf;border:1px solid #29263e}
+.card{margin-top:12px;padding:17px;border-radius:19px;background:#141326;border:1px solid #28253d}.tag{font-size:11px;color:#a875ff;font-weight:800}.card h3{margin:7px 0;font-size:17px}.card p{margin:0;color:#aaa6bb;font-size:13px;line-height:1.45}.meta{display:flex;justify-content:space-between;margin-top:13px;color:#77738d;font-size:12px}
+.modal{display:none;position:fixed;inset:0;background:#0009;align-items:flex-end;justify-content:center}.sheet{width:min(430px,100%);padding:22px;border-radius:28px 28px 0 0;background:#111020;border:1px solid #302b48}.sheet h2{margin-top:0}
+input,textarea{width:100%;background:#18172b;color:white;border:1px solid #302c48;border-radius:14px;padding:13px;font:inherit;margin:7px 0 12px;outline:none}textarea{min-height:120px;resize:vertical}.close{background:#25233a;padding:12px;border-radius:13px;width:100%;margin-top:8px}
+nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(430px,100%);height:68px;background:#0e0d1bEE;border-top:1px solid #29263c;display:flex;justify-content:space-around;align-items:center;backdrop-filter:blur(12px)}nav button{background:none;color:#8e8aa2;font-size:12px}nav .add{background:#9a62ff;width:48px;height:48px;border-radius:16px;font-size:25px;color:white}
+#ideas:empty:after{content:"Henüz fikir yok. İlk fikri sen oluştur!";display:block;color:#77738d;text-align:center;padding:25px}
+
+.ai-box{display:none;margin:4px 0 12px;padding:13px;border-radius:14px;background:#17152b;border:1px solid #3a2b66;color:#c9c4db;font-size:13px;line-height:1.5}
+.ai-box.show{display:block}.ai-title{font-weight:900;color:#b98aff;margin-bottom:5px}.ai-box strong{color:white}.ai-ok{border-color:#315c4a;background:#14231f}.ai-error{border-color:#6b3544;background:#25151d}
+
+.login-screen{position:fixed;inset:0;z-index:50;background:#05060a;display:flex;align-items:center;justify-content:center;padding:20px}
+.login-card{width:min(100%,380px);padding:28px;border-radius:28px;background:linear-gradient(145deg,#171425,#251747 55%,#171126);border:1px solid #302650;box-shadow:0 20px 60px #0008;text-align:center}
+.login-card h1{margin:0 0 8px;font-size:30px}.login-card p{color:#c4bfd4;margin:0 0 20px}.login-card input{margin-bottom:12px}.profile-name{font-size:10px;color:#c9bbff;margin-top:2px;max-width:72px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ai-box{display:none;margin-top:14px;padding:16px;border-radius:16px;background:#151823;border:1px solid #34394a;color:#c8ccda;font-size:13px;line-height:1.6;text-align:center}
+.ai-box.show{display:block}.ai-title{font-weight:900;margin-bottom:6px}
+
+
+.profile-screen{display:none;position:fixed;inset:0;z-index:40;background:#0009;align-items:flex-end;justify-content:center}
+.profile-card{width:min(430px,100%);padding:28px 22px 32px;border-radius:28px 28px 0 0;background:#111020;border:1px solid #302b48;text-align:center;position:relative}
+.profile-close{position:absolute;right:18px;top:18px;width:36px;height:36px;border-radius:12px;background:#25233a;color:white}
+.profile-avatar{width:76px;height:76px;margin:4px auto 12px;border-radius:25px;display:grid;place-items:center;background:linear-gradient(135deg,#7c4dff,#b35cff);font-size:35px}
+.profile-label{font-size:10px;letter-spacing:1.5px;color:#8e8aa2;font-weight:800}
+#profileNameLarge{margin:5px 0 20px;font-size:24px}
+.profile-stats{display:flex;justify-content:center;gap:12px;margin-bottom:20px}
+.profile-stats div{min-width:110px;padding:14px;border-radius:16px;background:#18172b;border:1px solid #302c48}
+.profile-stats strong{display:block;font-size:20px;color:#b98aff}
+.profile-stats span{font-size:11px;color:#8e8aa2}
+
+</style>
+</head>
+<body>
+
+<div class="login-screen" id="loginScreen">
+  <div class="login-card">
+    <div class="logo" style="margin-bottom:8px">THINK<span>UP</span></div>
+    <h1>Hoş geldin 👋</h1>
+    <p>Devam etmek için bir kullanıcı adı yaz.</p>
+    <input id="usernameInput" maxlength="24" placeholder="Kullanıcı adın">
+    <button class="primary" onclick="login()">Giriş Yap</button>
+  </div>
+</div>
+
+<div class="app">
+<header><div class="logo">THINK<span>UP</span></div><button class="icon">☰</button></header>
+
+<section class="hero">
+<h1>Fikrini paylaş.</h1>
+<p>Geliştir. Gerçeğe dönüştür. 🚀</p>
+<button class="primary" onclick="openModal()">＋ Geliştir</button>
+</section>
+
+<h2>Keşfet</h2>
+<div class="filters">
+<button class="filter">🔥 Popüler</button><button class="filter">🆕 Yeni</button><button class="filter">🎮 Oyun</button><button class="filter">💡 Teknoloji</button>
+</div>
+<div id="ideas">
+<div class="card"><div class="tag">TEKNOLOJİ</div><h3>Bisikletçiler için parça pazarı</h3><p>Bisikletçilerin kullanılmayan parçalarını güvenli şekilde alıp satabileceği bir platform.</p><div class="meta"><span>⭐ 82/100</span><span>💬 24 &nbsp; ❤️ 156</span></div></div>
+</div>
+</div>
+
+<div class="modal" id="modal">
+<div class="sheet">
+<h2>💡 Yeni Fikir</h2>
+<label>Fikrinin adı</label><input id="title" placeholder="Örn. Bisiklet parça pazarı">
+<label>Fikrini anlat</label><textarea id="desc" placeholder="Hangi problemi çözüyor? Kim kullanacak?"></textarea>
+<div class="ai-box" id="aiBox"></div>
+<button class="primary" onclick="addIdea()">Fikrimi Geliştir 🚀</button>
+<button class="close" onclick="closeModal()">Vazgeç</button>
+</div>
+</div>
+
+
+<div class="profile-screen" id="profileScreen">
+  <div class="profile-card">
+    <button class="profile-close" onclick="closeProfile()">✕</button>
+    <div class="profile-avatar">👤</div>
+    <div class="profile-label">KULLANICI ADI</div>
+    <h2 id="profileNameLarge">Kullanıcı</h2>
+    <div class="profile-stats">
+      <div><strong id="profileIdeas">0</strong><span>Fikir</span></div>
+      <div><strong id="profileLikes">0</strong><span>Beğeni</span></div>
+    </div>
+    <button class="primary" onclick="logout()">Çıkış Yap</button>
+  </div>
+</div>
+
+<nav>
+<button onclick="goHome()">⌂<br>Ana Sayfa</button>
+<button onclick="goExplore()">⌕<br>Keşfet</button>
+<button class="add" onclick="openModal()">+</button>
+<button onclick="showToast('Destek yakında geliyor 💜')">♡<br>Destek</button>
+<button onclick="openProfile()">☺<br><span class="profile-name" id="profileName">Profil</span></button>
+</nav>
+
+
+
+<script>
+let pendingIdea=null;
+let ideas=[
+ {title:'Bisikletçiler için parça pazarı',desc:'Bisikletçilerin kullanılmayan parçalarını güvenli şekilde alıp satabileceği bir platform.',category:'Teknoloji',score:82,comments:24,likes:156,time:Date.now()-86400000}
+];
+
+function openModal(){
+ document.getElementById('modal').style.display='flex';
+ const b=document.getElementById('aiBox'); b.className='ai-box'; b.innerHTML='';
+ const s=document.getElementById('shareIdeaBtn'); if(s)s.remove();
+}
+function closeModal(){document.getElementById('modal').style.display='none'}
+function login(){
+ const input=document.getElementById('usernameInput');
+ const name=input.value.trim().replace(/\s+/g,' ');
+ if(name.length<2){showToast('En az 2 karakterlik kullanıcı adı yaz.');return}
+ localStorage.setItem('thinkup_username',name);
+ setUser(name);
+ document.getElementById('loginScreen').style.display='none';
+}
+function setUser(name){
+ document.getElementById('profileName').textContent=name;
+ document.getElementById('profileNameLarge').textContent=name;
+ updateProfileStats();
+}
+function openProfile(){setUser(localStorage.getItem('thinkup_username')||'Kullanıcı');document.getElementById('profileScreen').style.display='flex'}
+function closeProfile(){document.getElementById('profileScreen').style.display='none'}
+function logout(){localStorage.removeItem('thinkup_username');closeProfile();document.getElementById('loginScreen').style.display='flex';document.getElementById('usernameInput').value=''}
+function goHome(){window.scrollTo({top:0,behavior:'smooth'});closeProfile()}
+function goExplore(){document.querySelector('.filters').scrollIntoView({behavior:'smooth'});closeProfile()}
+function updateProfileStats(){
+ const name=localStorage.getItem('thinkup_username');
+ if(!name)return;
+ const mine=ideas.filter(x=>x.author===name);
+ document.getElementById('profileIdeas').textContent=mine.length;
+ document.getElementById('profileLikes').textContent=mine.reduce((n,x)=>n+x.likes,0);
+}
+function evaluateIdea(title,desc){
+ const text=(title+' '+desc).trim(), words=text.split(/\s+/).filter(Boolean);
+ const letters=text.replace(/[^a-zA-ZçğıöşüÇĞİÖŞÜ]/g,'');
+ const compact=text.replace(/[\s.,!?;:'"()\-_/]+/g,'').toLowerCase();
+ const nonsense=/^(asdf|qwer|qwerty|test|deneme|abc|xyz|aaa|bbb|ccc|lol|hehe|jkjk|sdf|asd|şşş)+$/i.test(compact);
+ if(nonsense || words.length<6 || letters.length<25){
+   return {score:0,canShare:false,explanation:'Bu fikir çok kısa veya anlamsız görünüyor. THINKUP böyle fikirlere puan vermez ve paylaşılmasına izin vermez.',tips:['Problemi açıkça anlat.','Kimlerin kullanacağını yaz.','Nasıl çalışacağını birkaç cümleyle açıkla.']};
+ }
+ const lower=text.toLowerCase();
+ let score=52;
+ if(words.length>=10)score+=8;
+ if(words.length>=18)score+=7;
+ if(words.length>=30)score+=6;
+ if(words.length>=45)score+=5;
+ if(/problem|sorun|ihtiyaç|eksik/.test(lower))score+=8;
+ if(/kullanıcı|insan|öğrenci|bisikletçi|müşteri|oyuncu|öğretmen|sporcu/.test(lower))score+=8;
+ if(/uygulama|platform|sistem|çalış|özellik|servis/.test(lower))score+=7;
+ if(/çözüm|fayda|avantaj|yardımcı|sağlar/.test(lower))score+=7;
+ if(/yenilikçi|farklı|kolay|güvenli|hızlı/.test(lower))score+=5;
+ if(letters.length>=180)score+=5;
+ score=Math.min(100,score);
+ let explanation=score>=90?'Çok güçlü bir fikir. Problem, hedef kullanıcı ve çözüm tarafı oldukça net.':score>=80?'Oldukça iyi düşünülmüş ve geliştirilebilir bir fikir.':score>=70?'Güzel bir fikir. Birkaç ayrıntı daha eklenirse çok daha güçlü olabilir.':'Fikir anlaşılabiliyor fakat biraz daha detaylandırılabilir.';
+ let tips=[];
+ if(!/problem|sorun|ihtiyaç|eksik/.test(lower))tips.push('Çözdüğü problemi daha net anlat.');
+ if(!/kullanıcı|insan|öğrenci|bisikletçi|müşteri|oyuncu|öğretmen|sporcu/.test(lower))tips.push('Hedef kullanıcıyı belirt.');
+ if(!/uygulama|platform|sistem|çalış|özellik|servis/.test(lower))tips.push('Nasıl çalışacağını biraz daha anlat.');
+ return {score,canShare:true,explanation,tips};
+}
+function showEvaluation(r){
+ const b=document.getElementById('aiBox');
+ b.className='ai-box show '+(r.canShare?'ai-ok':'ai-error');
+ let h='<div style="font-size:34px;font-weight:900;margin-bottom:8px;color:'+(r.canShare?'#a78bfa':'#ff7b8a')+'">'+r.score+'/100</div><div class="ai-title">🤖 THINKUP AI</div><div>'+r.explanation+'</div>';
+ if(r.tips.length)h+='<div style="margin-top:12px;text-align:left"><strong>Fikrini geliştir:</strong><br>• '+r.tips.join('<br>• ')+'</div>';
+ b.innerHTML=h;
+ const old=document.getElementById('shareIdeaBtn');if(old)old.remove();
+ if(r.canShare){
+   const s=document.createElement('button');s.id='shareIdeaBtn';s.className='primary';s.style.marginTop='14px';s.textContent='Fikrimi Paylaş 🚀';s.onclick=()=>publishIdea(r);
+   const sheet=document.querySelector('#modal .sheet');sheet.insertBefore(s,sheet.querySelector('.close'));
+ }
+}
+function addIdea(){
+ const title=document.getElementById('title').value.trim(),desc=document.getElementById('desc').value.trim();
+ if(!title||!desc){showToast('Önce fikrini yaz ✍️');return}
+ const r=evaluateIdea(title,desc);
+ pendingIdea={title,desc,category:'Genel'};
+ showEvaluation(r);
+ showToast(r.score===0?'0/100 — Fikrini biraz daha geliştir.':'AI puanın: '+r.score+'/100 ⭐');
+}
+function publishIdea(r){
+ if(!pendingIdea||!r.canShare)return;
+ const author=localStorage.getItem('thinkup_username')||'Kullanıcı';
+ ideas.unshift({title:pendingIdea.title,desc:pendingIdea.desc,category:pendingIdea.category,score:r.score,comments:0,likes:0,time:Date.now(),author});
+ render();
+ updateProfileStats();
+ document.getElementById('title').value='';document.getElementById('desc').value='';pendingIdea=null;
+ closeModal();showToast('Fikrin paylaşıldı! ⭐ '+r.score+'/100');
+}
+function render(){
+ const box=document.getElementById('ideas');
+ box.innerHTML=ideas.map(x=>'<div class="card"><div class="tag">'+escapeHtml(x.category.toUpperCase())+'</div><h3>'+escapeHtml(x.title)+'</h3><p>'+escapeHtml(x.desc)+'</p><div class="meta"><span>⭐ '+x.score+'/100</span><span>💬 '+x.comments+' &nbsp; ❤️ '+x.likes+'</span></div></div>').join('');
+}
+function showToast(t){let x=document.getElementById('toast');if(!x){x=document.createElement('div');x.id='toast';x.style.cssText='position:fixed;left:50%;bottom:85px;transform:translateX(-50%);background:#19172a;border:1px solid #302c48;padding:11px 15px;border-radius:12px;z-index:100;color:white;font-size:12px';document.body.appendChild(x)}x.textContent=t;clearTimeout(window._toast);window._toast=setTimeout(()=>x.remove(),2200)}
+function escapeHtml(s){return s.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+window.addEventListener('DOMContentLoaded',()=>{
+ const name=localStorage.getItem('thinkup_username');
+ if(name){setUser(name);document.getElementById('loginScreen').style.display='none'}
+ else document.getElementById('loginScreen').style.display='flex';
+ render();
+});
+</script>
+
+</body>
+</html>
+
+
